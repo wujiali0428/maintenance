@@ -13,16 +13,24 @@
         温馨提示：保养记录报告来源于第三方，报告会以短信告知，预计30分钟内收到报告。（非工作时段报告预计次日生成）
         </p>
     </div>
+    <router-link to="/search">
+        <div class="search">立即查询</div>
+    </router-link>
     <div class="bottom">
-      <router-link to="/more" class="more">
+      <div class="more">
           <img src="../assets/more.png">
-          <div>更多</div>
-      </router-link>
-      <router-link to="/user" class="mine">
+          <div>首页</div>
+      </div>
+      <router-link to="/user" class="mine" v-if="login">
           <img src="../assets/user.png">
-          <div> 我的</div>
+          <div>我的</div>
      </router-link>
-      <router-link to="/search" class="search">立即查询</router-link>
+     <router-link to="/more" class="mine" v-else>
+          <img src="../assets/user.png">
+          <div>我的</div>
+     </router-link>
+    
+      <!-- <router-link to="/search" class="search">我的</router-link> -->
     </div>
   </div>
 </template>
@@ -33,9 +41,15 @@
 
 export default {
   name: 'home',
+   data() {
+    return {
+        login: true
+    }
+  },
   components: {
     // HelloWorld
-  }
+  },
+
 }
 </script>
 <style scoped>
@@ -58,11 +72,12 @@ export default {
       width: 100%;
       vertical-align: top;
   }
+
   .hint {
    
     border-radius: 4px;
     /* margin: 0 auto; */
-    padding-bottom: 0.18rem;
+    padding-bottom: 0.9rem;
      margin-top: 0.18rem;
     /* font-family: PingFangSC-Regular; */
    
@@ -79,6 +94,23 @@ export default {
     padding: 0.15rem 0.13rem;
     text-align: left;
      /* margin-bottom: 0.2rem; */
+  }
+  .search {
+    height: 0.5rem;
+    width: 80%; 
+    background-image: linear-gradient(-151deg, #537EFF 0%, #105FF8 100%);
+    font-size: 0.18rem;
+    border-radius: 0.3rem;
+    position: fixed;
+    z-index: 100;
+    bottom: 0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    /* margin: 0 auto; */
+    text-align: center;
+    line-height: 0.5rem;
+    color: #fff;
+
   }
   .bottom {
     width: 100%;
@@ -100,7 +132,7 @@ export default {
   }
   .more {
     background: #fff;
-    width: 0.78rem;
+    width: 50%;
     display: flex;
     display: -webkit-flex; /* Safari */
     flex-direction: column;
@@ -109,21 +141,12 @@ export default {
   }
   .mine {
     background: #fff;
-    width: 0.79rem;
+    width: 50%;
     display: -webkit-flex; /* Safari */
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
-  .search {
-    background-image: linear-gradient(-151deg, #537EFF 0%, #105FF8 100%);
-    /* width: 50%; */
-    width: 2.18rem;
-    font-size: 0.18rem;
-    color: #fff;
-    display: flex;
-     align-items: center;
-    justify-content: center;
-  }
+  
 </style>
 
