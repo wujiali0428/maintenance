@@ -9,7 +9,7 @@ import 'mint-ui/lib/style.css'
 
 Vue.config.productionTip = false
 Vue.use(Mint)
-
+console.log(router)
 new Vue({
   router,
   store,

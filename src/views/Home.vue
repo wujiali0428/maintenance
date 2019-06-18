@@ -58,7 +58,6 @@ export default {
  }
   .banner {
       width: 100%;
-      /* vertical-align: top; */
   }
   .banner img{
       width: 100%;
@@ -66,7 +65,6 @@ export default {
   }
   .content {
       width: 100%;
-      /* vertical-align: top; */
   }
   .content img{
       width: 100%;
@@ -76,10 +74,8 @@ export default {
   .hint {
    
     border-radius: 4px;
-    /* margin: 0 auto; */
     padding-bottom: 0.9rem;
      margin-top: 0.18rem;
-    /* font-family: PingFangSC-Regular; */
    
   }
   .hint p {
@@ -90,10 +86,8 @@ export default {
     margin-bottom: 0.5rem;
     font-size: 0.12rem;
     color: #9C9EA8;
-    /* line-height: 20px; */
     padding: 0.15rem 0.13rem;
     text-align: left;
-     /* margin-bottom: 0.2rem; */
   }
   .search {
     height: 0.5rem;
@@ -106,7 +100,6 @@ export default {
     bottom: 0.7rem;
     left: 50%;
     transform: translateX(-50%);
-    /* margin: 0 auto; */
     text-align: center;
     line-height: 0.5rem;
     color: #fff;
@@ -117,7 +110,6 @@ export default {
     display: flex;
     display: -webkit-flex; /* Safari */
     justify-content: space-between;
-    /* align-items: center; */
     position: fixed;
     z-index: 100;
     bottom: 0;
