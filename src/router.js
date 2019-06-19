@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import More from './views/More.vue'
 import User from './views/User.vue'
 import Search from './views/Search.vue'
+import Login from './views/Login.vue'
 
 Vue.use(Router)
 
@@ -31,9 +32,9 @@ let router = new Router({
       path: '/user',
       name: 'user',
       component: User,
-      meta: {
-        login_require: true
-      },
+      // meta: {
+      //   login_require: true
+      // },
     },
     {
       path: '/more',
@@ -42,6 +43,11 @@ let router = new Router({
       meta: {
         login_require: true
       },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
     },
     {
       path: '/search',
@@ -56,7 +62,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.login_require)) {
       if (!window.localStorage.getItem("login")) {
         next({
-          path: '/search'
+          path: '/login'
         })
       } else {
         next()
