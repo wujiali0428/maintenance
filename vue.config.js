@@ -3,7 +3,9 @@ module.exports = {
 //     host: 'localhost',
 //     port: 8089
 //   }
+ lintOnSave: false,  //关闭代码校验
   devServer: {
+
     port:8090,
     proxy: {
         '/v5': { //如果请求api的话 改下面的配置

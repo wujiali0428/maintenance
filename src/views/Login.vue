@@ -33,8 +33,8 @@ export default {
     return {
       isLogin: true,
       redirect: "",
-      userTel: this.$store.state.tel || "",
-      code: this.$store.state.code || "",
+      userTel: "",
+      code: "",
       btnText: "获取验证码",
       canGetCode: true,
       leftTime: 60,
@@ -55,8 +55,8 @@ export default {
       axios({
           url:"v5/user/code",
           method: 'post',
-          tel: this.userTel
-          }).then((xhr, res) => {
+          data: {tel: this.userTel}
+          }).then((res) => {
           console.log(res.code);
           if (res.code > 0) {
             Toast({
@@ -72,7 +72,7 @@ export default {
             });
           }
         })
-        .catch(function(e, xhr, response) {
+        .catch((res)=> {
           console.log("e", e);
           Toast({
             message: "发送验证码失败，请重试",
@@ -99,7 +99,8 @@ export default {
         tel: this.userTel,
         code: this.code
       };
-      axios("v5/user/login", param).then((xhr, res) => {
+      axios.post("v5/user/login", param).then((res) => {
+         console.log(res,"ssssss")
         if (res.code > 0) {
           Toast({
             message: res.msg,
@@ -107,10 +108,12 @@ export default {
             duration: 3000
           });
         } else {
-          let userInfo = res.data.User;
-          let token = res.data.Token;
+          console.log(res,"!!!!")
+          let userInfo = res.data.data.User;
+          let token = res.data.data.Token;
         //   store.commit("SET_USER", userInfo);
         //   store.commit("SET_TOKEN", token);
+        //存本地的时候要转成json字符串，否则会强制转换成字符串，打印出来的是object
           window.localStorage.setItem("user", JSON.stringify(userInfo));
           window.localStorage.setItem("token", token);
           Toast({

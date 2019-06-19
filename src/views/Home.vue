@@ -21,11 +21,7 @@
           <img src="../assets/more.png">
           <div>首页</div>
       </div>
-      <router-link to="/user" class="mine" v-if="login">
-          <img src="../assets/user.png">
-          <div>我的</div>
-     </router-link>
-     <router-link to="/more" class="mine" v-else>
+      <router-link to="/user" class="mine">
           <img src="../assets/user.png">
           <div>我的</div>
      </router-link>

@@ -5,9 +5,17 @@
         <div class='title'>{{tel}}，车主用户您好</div>
     </div>
     <div class="content">
-        <div>
-          <img src="../assets/user_icon1.png">
-          <text>我的账单</text>
+        <div class="icon">
+          <div >
+            <img src="../assets/user_icon1.png">
+            <p>我的账单</p>
+          </div>
+        </div>
+        <div class="icon">
+          <div>
+            <img src="../assets/user_icon2.png">
+            <p>维保报告</p>
+          </div>
         </div>
     </div>
   </div>
@@ -18,14 +26,17 @@
 
 export default {
   name: 'user',
-  components: {
-    
-  },
    data() {
     return {
-      tel: '11111'
+      tel: ''
     };
   },
+  created() {
+    if(window.localStorage.getItem('user')){
+      let user = JSON.parse(window.localStorage.getItem('user'));
+      this.tel=user.Tel.replace(/(\d{3})\d{6}(\d{2})/, '$1******$2')
+    }
+  }
 }
 </script>
 <style scoped>
@@ -56,5 +67,30 @@ export default {
   width: 3.55rem;
   background: #fff;
   color: #000;
+  margin: 0 auto;
+  position: relative;
+  top: -0.2rem;
+}
+.icon {
+  display: flex;
+  /* border-bottom: 0.01rem solid #f8f8f8;   */
+}
+.icon>div {
+  margin: 0.227rem 0.15rem 0 0.15rem;
+  flex: 1;
+  display: flex;
+  height: 100%;
+  padding-bottom: 0.18rem;
+  border-bottom: 0.01rem solid #f8f8f8;
+}
+.icon img {
+  width: 0.17rem;
+  height: 0.2rem;
+  display: block;
+}
+.icon p {
+  font-size: 14px;
+  color: #5B5E6A;
+  margin-left: 0.23rem;
 }
 </style> 
