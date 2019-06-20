@@ -5,9 +5,11 @@ import More from './views/More.vue'
 import User from './views/User.vue'
 import Search from './views/Search.vue'
 import Login from './views/Login.vue'
+import Order from './views/Order.vue'
+import Report from './views/Report.vue'
+
 
 Vue.use(Router)
-
 let router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -37,6 +39,22 @@ let router = new Router({
       // },
     },
     {
+      path: '/order',
+      name: 'order',
+      component: Order,
+      // meta: {
+      //   login_require: true
+      // },
+    },
+    {
+      path: '/report',
+      name: 'report',
+      component: Report,
+      meta: {
+        login_require: true
+      },
+    },
+    {
       path: '/more',
       name: 'more',
       component: More,
@@ -60,7 +78,7 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   //判断meta信息里是否需要登录
     if (to.matched.some(record => record.meta.login_require)) {
-      if (!window.localStorage.getItem("login")) {
+      if (!window.localStorage.getItem("user")) {
         next({
           path: '/login'
         })

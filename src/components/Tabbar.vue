@@ -1,51 +1,36 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <div class="banner">
-      <img src="../assets/banner.png" />
-    </div>
-    <div class="content">
-      <img src="https://app.s4s.cn/razio/maintenance_introduce_bg.png" />
-    </div>
-    <div class="hint">
-        <p>
-        温馨提示：保养记录报告来源于第三方，报告会以短信告知，预计30分钟内收到报告。（非工作时段报告预计次日生成）
-        </p>
-    </div>
-    <router-link to="/search">
-        <div class="search">立即查询</div>
-    </router-link>
-
-    <Tabbar/>
-    <!-- <div class="bottom">
-      <div class="more">
+    <div class="bottom">
+      <router-link to="/" class="more">
           <img src="../assets/more.png">
           <div>首页</div>
-      </div>
+      </router-link>
       <router-link to="/user" class="mine">
           <img src="../assets/user.png">
           <div>我的</div>
      </router-link>
-    </div> -->
+    
+      <!-- <router-link to="/search" class="search">我的</router-link> -->
+    </div>
   </div>
 </template>
-
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import Tabbar from '@/components/Tabbar.vue'
 
 export default {
-  name: 'home',
+  name: 'Tabbar',
    data() {
     return {
         // login: true
     }
   },
   components: {
-    Tabbar
+    // HelloWorld
   },
+  props: {
+    msg: String
+  }
 
 }
 </script>
@@ -53,39 +38,6 @@ export default {
  .home {
    background: #f5f5f5;
  }
-  .banner {
-      width: 100%;
-  }
-  .banner img{
-      width: 100%;
-      vertical-align: top;
-  }
-  .content {
-      width: 100%;
-  }
-  .content img{
-      width: 100%;
-      vertical-align: top;
-  }
-
-  .hint {
-   
-    border-radius: 4px;
-    padding-bottom: 0.9rem;
-     margin-top: 0.18rem;
-   
-  }
-  .hint p {
-    height: 0.36rem;
-    width: 3.25rem;
-    margin: 0 auto;
-    background: #EFEFEF;
-    margin-bottom: 0.5rem;
-    font-size: 0.12rem;
-    color: #9C9EA8;
-    padding: 0.15rem 0.13rem;
-    text-align: left;
-  }
   .search {
     height: 0.5rem;
     width: 80%; 
@@ -127,6 +79,8 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border-top: 0.01rem solid #f3f3f3;
+    /* box-shadow: 0.01rem 0.01rem 0.05rem #fefefe; */
   }
   .mine {
     background: #fff;
@@ -135,6 +89,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border-top: 0.01rem solid #f3f3f3;
   }
   
 </style>
