@@ -61,7 +61,7 @@ export default {
       vertical-align: top;
   }
   .content {
-      width: 100%;
+      /* width: 100%; */
   }
   .content img{
       width: 100%;
