@@ -8,7 +8,7 @@
         <div class="icon" @click="gotoOrder">
           <div>
             <img src="../assets/user_icon1.png">
-            <p>我的账单</p>
+            <p>我的订单</p>
           </div>
         </div>
         <div class="icon" @click="gotoReport">
