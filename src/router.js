@@ -34,17 +34,17 @@ let router = new Router({
       path: '/user',
       name: 'user',
       component: User,
-      // meta: {
-      //   login_require: true
-      // },
+      meta: {
+        login_require: true
+      },
     },
     {
       path: '/order',
       name: 'order',
       component: Order,
-      // meta: {
-      //   login_require: true
-      // },
+      meta: {
+        login_require: true
+      },
     },
     {
       path: '/report',
@@ -71,6 +71,9 @@ let router = new Router({
       path: '/search',
       name: 'search',
       component: Search,
+      meta: {
+        login_require: true
+      },
     },
   ]
 })

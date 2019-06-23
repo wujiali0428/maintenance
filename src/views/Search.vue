@@ -17,21 +17,22 @@
           <div><label>车辆VIN码<span class="help-icon" @click="handleFocus">?</span></label></div>
           <input placeholder="输入17位车辆VIN码" ref="file" type="file" accept="image/*" multiple="multiple" style="display: none;" @change="fileChanged">
           <div class="photo" style="display:flex;margin-left: 0.02rem;">
+             <canvas id="canvas" style="display: none;"></canvas>
             <img src="../assets/search_photo.png">
             <p @click="uploadImage">拍照识别</p>
           </div>
       </div>
       <div>
         <label>查询价格</label>
-        <div class="price">¥ {{ total || 39.00}}</div>
+        <div class="price">¥ {{ total}}</div>
       </div>
       <div>
         <label>优惠</label>
-        <div class="price" style="color: red">- ¥ {{discount || 10.00}} </div>
+        <div class="price" style="color: red">- ¥ {{discount}} </div>
       </div>
       <div>
         <label>合计</label>
-        <div class="price">¥ <span style="font-weight:bold;font-size:0.18rem">{{realPay || 29.00}}</span> </div>
+        <div class="price">¥ <span style="font-weight:bold;font-size:0.18rem">{{realPay}}</span> </div>
       </div>
     </div>
     <div class="login-btn" @click="goLogin">确认支付</div>
@@ -61,11 +62,25 @@ export default {
       discount:'',//优惠价格
       realPay:'',  //合计
       where: false,   //显示隐藏vin码在哪里的图片
-      fileChanged: '',  //识别vin码的input绑定
+      // fileChanged: '',  //识别vin码的input绑定
     };
   },
-  mounted() {},
+  mounted() {
+    this.getPrice();
+  },
   methods: {
+    //获取价格
+    getPrice(){
+      let token =  window.localStorage.getItem("token");
+      axios.post('v5/car/get/order_price',{access_token:token}).then(res=>{
+        console.log(res)
+        if(res.data.code ===0 ){
+            this.realPay= (res.data.data.real_pay/100).toFixed(2) || 29.00
+            this.total= (res.data.data.total_price/100).toFixed(2) || 39.00
+            this.discount= (res.data.data.discount/100).toFixed(2) || 10.00
+         }
+    })
+  },
     //点击？显示隐藏图片
     handleFocus: function() {
       if(this.where==false){
@@ -74,6 +89,113 @@ export default {
           this.where = false;
       } 
     },
+    //点击拍照识别
+    uploadImage() {
+      this.$refs.file.click();
+    },
+    fileChanged() {
+      const self = this;
+      const list = this.$refs.file.files;
+      if (list.length !== 1) {
+        Toast({
+              message:'最多只能选择1张驾驶证。',
+              position: "middle",
+              duration: 3000
+            });
+      }
+      const item = {
+        name: list[0].name,
+        size: list[0].size,
+        file: list[0],
+      };
+      self.html5Reader(list[0], item);
+    },
+    html5Reader(file, item) {
+      const that = this;
+      const imgSrc = new Image();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imgSrc.src = e.srcElement.result;
+        that.$set(item, 'src', e.srcElement.result);
+        imgSrc.onload = function () {//eslint-disable-line
+          // 图片原始尺寸
+          const originWidth = this.width;
+          const originHeight = this.height;
+          // 最大尺寸限制
+          const maxWidth = 600;
+          const maxHeight = 600;
+          // 目标尺寸
+          let targetWidth = originWidth;
+          let targetHeight = originHeight;
+          // 图片尺寸超过400x400的限制
+          if (originWidth > maxWidth || originHeight > maxHeight) {
+            if (originWidth / originHeight > maxWidth / maxHeight) {
+              // 更宽，按照宽度限定尺寸
+              targetWidth = maxWidth;
+              targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+            } else {
+              targetHeight = maxHeight;
+              targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+            }
+          }
+          const canvas = document.getElementById('canvas');
+          const context = canvas.getContext('2d');
+          // canvas对图片进行缩放
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          // 清除画布
+          context.clearRect(0, 0, targetWidth, targetHeight);
+          // 图片压缩
+          context.drawImage(imgSrc, 0, 0, targetWidth, targetHeight);
+          // canvas转为blob并上传
+          const data = canvas.toDataURL('image/jpeg').split(',')[1];
+          // 获取base64图片大小，返回MB数字
+          const size = parseInt(data.length - data.length / 8 * 2);//eslint-disable-line
+          console.log(size);
+          if (size) {
+            const isLt2M = size / 1024 / 1024 < 2;
+            if (!isLt2M) {
+               Toast({
+              message:'图片大小需要小于 2MB!',
+              position: "middle",
+              duration: 3000
+            });
+              // that.$showToast({ title: '图片大小需要小于 2MB!' });
+              return;
+            }
+             Toast({
+              message:'正在上传',
+              position: "middle",
+              duration: 3000
+            });
+            // that.$showToast({ title: '正在上传' });
+            that.vehiclecardFetch(data);
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    },
+    vehiclecardFetch(data) {
+      // 识别行驶证
+      const self = this;
+      axios.post('v2/car/b64/recognize_vehiclecard', {
+        imageString: data,
+      })
+        .then((xhr, res) => {
+          if (res.code === 0) {
+            if (res.data && res.data.img_url) {
+              // self.driveUrl = res.data.img_url;
+              this.$showToast({ title: '行驶证识别成功，请您核对信息是否准确' });
+              this.vehicleInfo(res.data, self.driveUrl);
+            } else {
+              this.$showToast({ title: '行驶证图片识别失败，请再次拍照识别或手动输入' });
+            }
+          } else {
+            this.$showToast({ title: res.msg });
+          }
+        });
+    },
+    //验证码
     sendCode: function() {
       this.canGetCode = true;
       this.leftTime = 60;
