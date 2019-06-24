@@ -74,11 +74,11 @@ export default {
                 limit: 2000
             }
             // Indicator.open("正在查询。。。");
-            axios.post('v5/car_inspect/get_inspect_order_list', param).then(res => {
+            axios.post('grey/v5/car_inspect/get_inspect_order_list', param).then(res => {
                 console.log(res)
                 //  Indicator.close();
                 if (res.code == 0 && res.data.data && res.data.data.list) {
-                         this.list = res.data.data.lists
+                        this.list = res.data.data.lists
                 }
             }).catch(e=>{
                 // console.log(e)

@@ -69,7 +69,7 @@ export default {
                 access_token: this.token
             }
             // Indicator.open("正在查询。。。");
-            axios.post('v5/car_inspect/get_inspect_order_list', param).then(res => {
+            axios.post('grey/v5/car_inspect/get_inspect_order_list', param).then(res => {
                 console.log(res)
                 //  Indicator.close();
                 if (res.data.code == 0 && res.data.data && res.data.data.list) {
@@ -102,7 +102,7 @@ export default {
                     order_id: id
                 }
             // v3/violation/order/cancel v2/car/cancel_vio_order
-                axios.post('v5/car_inspect/cancel_inspect_order', param).then(res => {
+                axios.post('grey/v5/car_inspect/cancel_inspect_order', param).then(res => {
                     if (res.code == 0) {
                         Toast({
                             icon:'none',

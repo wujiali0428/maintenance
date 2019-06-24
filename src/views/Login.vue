@@ -49,7 +49,7 @@ export default {
         tel: this.userTel
       };
       axios({
-          url:"v5/user/code",
+          url:"grey/v5/user/code",
           method: 'post',
           data: {tel: this.userTel}
           }).then((res) => {
@@ -95,7 +95,7 @@ export default {
         tel: this.userTel,
         code: this.code
       };
-      axios.post("v5/user/login", param).then((res) => {
+      axios.post("grey/v5/user/login", param).then((res) => {
          console.log(res.data.code,"登陆页面login的code值")
         if (res.data.code > 0) {
           Toast({
