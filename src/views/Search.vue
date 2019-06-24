@@ -16,7 +16,7 @@
           <img src="../assets/where.png" class="vin_image" v-if="where">
           <div><label>车辆VIN码<span class="help-icon" @click="handleFocus">?</span></label></div>
           <input placeholder="输入17位车辆VIN码" type="text" v-model="vin" maxlength="17">
-          <input ref="file" type="file" accept="image/*" multiple="multiple" style="display: none;" @change="fileChanged">
+          <input ref="file" type="file" accept="image/*" multiple="multiple" style="display: none;" @change="fileChanged($event)">
           <canvas id="canvas" style="display: none;"></canvas>
           <div class="photo" style="display:flex;margin-left: 0.02rem;">
             <img src="../assets/search_photo.png">
@@ -85,7 +85,7 @@ export default {
   methods: {
     //获取价格
     getPrice(){
-      axios.post('v5/car/get/order_price',{access_token:this.token}).then(res=>{
+      axios.post('grey/v5/car/get/order_price',{access_token:this.token}).then(res=>{
         console.log(res)
         if(res.data.code ===0 ){
             this.realPay= (res.data.data.real_pay/100).toFixed(2) || 29.00
@@ -106,7 +106,7 @@ export default {
     uploadImage() {
       this.$refs.file.click();
     },
-    fileChanged() {
+    fileChanged(e) {
       const self = this;
       const list = this.$refs.file.files;
       console.log('file',list)
@@ -123,6 +123,7 @@ export default {
         file: list[0],
       };
       self.html5Reader(list[0], item);
+      e.target.value="";
     },
     html5Reader(file, item) {
       const that = this;
@@ -162,14 +163,14 @@ export default {
           // 图片压缩
           context.drawImage(imgSrc, 0, 0, targetWidth, targetHeight);
           // canvas转为blob并上传
-          const data = canvas.toDataURL('image/jpeg').split(',')[1];
+          const data = canvas.toDataURL('image/jpeg')
           // 获取base64图片大小，返回MB数字
           const size = parseInt(data.length - data.length / 8 * 2);//eslint-disable-line
           console.log(size);
           if (size) {
             const isLt2M = size / 1024 / 1024 < 2;
             if (!isLt2M) {
-               Toast({
+            Toast({
               message:'图片大小需要小于 2MB!',
               position: "middle",
               duration: 3000
@@ -177,29 +178,28 @@ export default {
               // that.$showToast({ title: '图片大小需要小于 2MB!' });
               return;
             }
-             Toast({
+            Toast({
               message:'正在上传',
               position: "middle",
               duration: 3000
             });
             // that.$showToast({ title: '正在上传' });
-            that.vehiclecardFetch(data,file);
+            that.vehiclecardFetch(data);
           }
         };
       };
       reader.readAsDataURL(file);
     },
-    vehiclecardFetch(data,file) {
+    vehiclecardFetch(data) {
       // 识别行驶证
+      // console.log('------------',data);
+      let img = this.dataURLtoFile(data,'image')
+      console.log(img,"img")
       const self = this;
-      console.log('shangchuan',data);
-      axios.post('v2/car/recognize_vehiclecard', {   //https://mys4s.cn/v2/car/recognize_vehiclecard?source=alipay
-        // imageString: data,
-        access_token: this.token,
-        fileType: 'image',
-        fileName: 'image',
-        filePath: file,
-      })
+      var formData=new FormData();
+      formData.append('image',img);
+      formData.append('access_token',this.token);
+      axios.post('grey/v2/car/recognize_vehiclecard', formData)
         .then((res) => {
           console.log("res",res)
           if (res.data.code === 0) {
@@ -227,7 +227,7 @@ export default {
         tel: this.userTel
       };
       axios({
-          url:"v5/user/code",
+          url:"grey/v5/user/code",
           method: 'post',
           data: {tel: this.userTel}
           }).then((res) => {
@@ -301,7 +301,7 @@ export default {
     }
     console.log(this.token,"token")
       // 验证vin码
-      axios.post('/v5/car/check_vin',{
+      axios.post('grey/v5/car/check_vin',{
         vin:this.vin,
         access_token:this.token
       }).then(res=>{
@@ -314,7 +314,7 @@ export default {
             code: this.code,
             no_token: true
           };
-          axios.post('v5/user/login',param).then(res => {
+          axios.post('grey/v5/user/login',param).then(res => {
             console.log(res.data.code,"验证登陆的code的值")
             if (res.data.code === 0) {
               this.canPay()// 验证码通过，拉取支付
@@ -357,7 +357,7 @@ export default {
         pay_method: "alipay_h5"
 
       }
-      axios.post('v5/car_inspect/create_inspect_order',param).then((res)=>{
+      axios.post('grey/v5/car_inspect/create_inspect_order',param).then((res)=>{
         if(res.code > 0) { 
           Toast({
             message: res.data.msg,
@@ -373,6 +373,20 @@ export default {
       })
 
     },
+    dataURLtoFile(dataurl, filename) {
+      var arr = dataurl.split(',');
+      var mime = arr[0].match(/:(.*?);/)[1];
+      var bstr = atob(arr[1]);
+      var n = bstr.length;
+      var u8arr = new Uint8Array(n);
+      while(n--){
+          u8arr[n] = bstr.charCodeAt(n);
+      }
+      //转换成file对象
+      return new File([u8arr], filename, {type:mime});
+      //转换成成blob对象
+      //return new Blob([u8arr],{type:mime});
+    }
     //选择支付方式
     //  choosePay(){
     //     this.aplay = false;
