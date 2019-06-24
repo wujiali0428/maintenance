@@ -205,13 +205,13 @@ export default {
           if (res.data.code === 0) {
             if (res.data && res.data.img_url) {
               // self.driveUrl = res.data.img_url;
-              Toast({ title: '行驶证识别成功，请您核对信息是否准确' });
-              this.vehicleInfo(res.data, self.driveUrl);
+              Toast({ message: '行驶证识别成功，请您核对信息是否准确' });
+              // this.vehicleInfo(res.data, self.driveUrl);
             } else {
-              Toast({ title: '行驶证识别失败，请重新上传识别' });
+              Toast({ message: '行驶证识别失败，请重新上传识别' });
             }
           } else {
-              Toast({ title: res.msg });
+              Toast({ message: res.data.msg });
           }
         }).catch((err)=>{
           console.log("err",err)
