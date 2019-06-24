@@ -43,6 +43,9 @@ export default {
         // login: true
     }
   },
+  mounted() {
+    document.getElementById('title').innerHTML = this.$route.name
+  },
   components: {
     Tabbar
   },

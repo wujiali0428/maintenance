@@ -16,7 +16,7 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: '维保查询',
       component: Home,
     },
     {
@@ -32,7 +32,7 @@ let router = new Router({
     },
     {
       path: '/user',
-      name: 'user',
+      name: '我的',
       component: User,
       meta: {
         login_require: true
@@ -40,7 +40,7 @@ let router = new Router({
     },
     {
       path: '/order',
-      name: 'order',
+      name: '我的订单',
       component: Order,
       meta: {
         login_require: true
@@ -48,7 +48,7 @@ let router = new Router({
     },
     {
       path: '/report',
-      name: 'report',
+      name: '维保报告',
       component: Report,
       meta: {
         login_require: true
@@ -64,12 +64,12 @@ let router = new Router({
     },
     {
       path: '/login',
-      name: 'login',
+      name: '登陆',
       component: Login,
     },
     {
       path: '/search',
-      name: 'search',
+      name: '确认订单',
       component: Search,
       meta: {
         login_require: true

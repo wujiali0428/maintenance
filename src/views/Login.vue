@@ -42,7 +42,9 @@ export default {
       canLoginbtn: true
     };
   },
-  mounted() {},
+  mounted() {
+    document.getElementById('title').innerHTML = this.$route.name
+  },
   methods: {
     sendCode: function() {
       this.canGetCode = true;

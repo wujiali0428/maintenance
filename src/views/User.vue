@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="icon" @click="gotoReport">
-          <div>
+          <div style="border-bottom: none;padding-bottom: 0">
             <img src="../assets/user_icon2.png">
             <p>维保报告</p>
           </div>
@@ -31,6 +31,9 @@ export default {
     return {
       tel: ''
     };
+  },
+  mounted() {
+    document.getElementById('title').innerHTML = this.$route.name
   },
   methods: {
     gotoOrder(){
@@ -74,13 +77,14 @@ export default {
     margin-top: 0.15rem;
 }
 .content {
-  width: 3.55rem;
+  width: 3.3rem;
   background: #fff;
   color: #000;
   margin: 0 auto;
   position: relative;
   top: -0.2rem;
-  box-shadow: 0.01rem 0.01rem 0.05rem #888888;
+  border-radius: 0.05rem;
+  /* box-shadow: 0.01rem 0.01rem 0.05rem #888888; */
 }
 .icon {
   display: flex;

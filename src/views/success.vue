@@ -27,6 +27,9 @@ export default {
 
         }
     },
+    mounted() {
+        document.getElementById('title').innerHTML = this.$route.name
+    },
     methods:{
         details (){
         console.log("details")
