@@ -7,7 +7,8 @@ import Search from './views/Search.vue'
 import Login from './views/Login.vue'
 import Order from './views/Order.vue'
 import Report from './views/Report.vue'
-
+import PaySuccess from './views/PaySuccess.vue'
+import Success from './views/Success'
 
 Vue.use(Router)
 let router = new Router({
@@ -71,6 +72,22 @@ let router = new Router({
       path: '/search',
       name: '确认订单',
       component: Search,
+      meta: {
+        login_require: true
+      },
+    },
+    {
+      path: '/success',
+      name: '确认订单',
+      component: Success,
+      meta: {
+        login_require: true
+      },
+    },
+    {
+      path: '/paySuccess',
+      name: '确认订单',
+      component: PaySuccess,
       meta: {
         login_require: true
       },

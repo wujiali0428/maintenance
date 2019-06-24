@@ -23,12 +23,6 @@ import { Toast } from "mint-ui";
 import axios from 'axios';
 // import store from "../store";
 export default {
-//   beforeRouteEnter: function(to, from, next) {
-//     next(vm => {
-//       vm.isLogin = to.query.login;
-//       vm.redirect = to.query.redirect;
-//     });
-//   },
   data() {
     return {
       isLogin: true,
@@ -102,10 +96,10 @@ export default {
         code: this.code
       };
       axios.post("v5/user/login", param).then((res) => {
-         console.log(res,"ssssss")
-        if (res.code > 0) {
+         console.log(res.data.code,"登陆页面login的code值")
+        if (res.data.code > 0) {
           Toast({
-            message: res.msg,
+            message: res.data.msg,
             position: "middle",
             duration: 3000
           });
@@ -113,8 +107,6 @@ export default {
           console.log(res,"!!!!")
           let userInfo = res.data.data.User;
           let token = res.data.data.Token;
-        //   store.commit("SET_USER", userInfo);
-        //   store.commit("SET_TOKEN", token);
         //存本地的时候要转成json字符串，否则会强制转换成字符串，打印出来的是object
           window.localStorage.setItem("user", JSON.stringify(userInfo));
           window.localStorage.setItem("token", token);
@@ -125,29 +117,9 @@ export default {
           });
 
           this.$router.push('/user');
-        //   self.$store.state.tel = "";
-        //   self.$store.state.code = "";
-        //   console.log(self.redirect);
-        //   setTimeout(function() {
-        //     if (self.redirect) {
-        //       self.$router.replace({
-        //         path: self.redirect,
-        //         query: self.$route.query
-        //       });
-        //     } else {
-        //       self.$router.go(-1);
-        //     }
-        //   }, 100);
         }
       });
     },
-    // gotoRule: function() {
-    //   this.$store.state.tel = this.userTel;
-    //   this.$store.state.code = this.code;
-    //   this.$router.push({
-    //     path: "/Rule"
-    //   });
-    // }
   },
   watch: {
     userTel: function(val) {

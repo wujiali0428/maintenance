@@ -65,13 +65,14 @@ export default {
             let self = this
             let param = {
                 status: this.selected,
-                limit: 2000
+                limit: 2000,
+                access_token: this.token
             }
             // Indicator.open("正在查询。。。");
             axios.post('v5/car_inspect/get_inspect_order_list', param).then(res => {
                 console.log(res)
                 //  Indicator.close();
-                if (res.code == 0 && res.data.data && res.data.data.list) {
+                if (res.data.code == 0 && res.data.data && res.data.data.list) {
                     const lists = res.data.data.list.map(item=>{
                     console.log(this.getStatusStr(item.Status),item.Status)
                         return {

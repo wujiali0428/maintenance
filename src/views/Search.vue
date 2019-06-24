@@ -202,7 +202,7 @@ export default {
       })
         .then((res) => {
           console.log("res",res)
-          if (res.code === 0) {
+          if (res.data.code === 0) {
             if (res.data && res.data.img_url) {
               // self.driveUrl = res.data.img_url;
               Toast({ title: '行驶证识别成功，请您核对信息是否准确' });
@@ -231,13 +231,15 @@ export default {
           method: 'post',
           data: {tel: this.userTel}
           }).then((res) => {
-          console.log(res.code);
-          if (res.code > 0) {
+          console.log(res.data.code,"获取验证码的code值");
+          if (res.data.code > 0) {
             Toast({
-              message: res.msg,
+              message: res.data.msg,
               position: "middle",
               duration: 3000
             });
+            clearInterval(this.timer);
+            this.btnText = "获取验证码"
           } else {
             Toast({
               message: "发送成功",
@@ -271,92 +273,119 @@ export default {
     },
     //确认支付按钮
     handlePay: function() {
-    //   const telReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/
-    //   var vinReg = /^[0-9a-zA-Z]{17}$/
-    //   if(!telReg.test(this.userTel)){
-    //     Toast({
-    //       message: "请您输入正确的手机号码",
-    //       position: "middle",
-    //       duration: 3000
-    //     })
-    //     return
-    //   }
-    //   if(this.code.length!=4){
-    //     Toast({
-    //        message: "验证码错误，请核对后重新输入",
-    //       position: "middle",
-    //       duration: 3000
-    //     })
-    //   return
-    // }
-    // if(!vinReg.test(this.vin)){
-    //     Toast({
-    //      message: "车辆VIN码格式不正确，请确认后再次提交",
-    //       position: "middle",
-    //       duration: 3000
-    //   });
-    //   return
-    // }
-    // console.log(this.token,"token")
-      //验证vin码
-      // axios.post('/v5/car/check_vin',{
-      //   vin:this.vin,
-      //   access_token:this.token
-      // }).then(res=>{
-      // console.log(res)
-      //   if(res.code == 0){
-      //     // 验证验证码和手机号
-      //     let param = {
-      //       tel: this.userTel,
-      //       code: this.code,
-      //       no_token: true
-      //     };
-      //     axios.post('v5/user/login',param).then(res => {
-      //       if (res.code === 0) {
-      //         this.canPay()// 验证码通过，拉取支付
-      //       } else {
-      //         Toast({
-      //           message: res.data.msg,
-      //           position: "middle",
-      //           duration: 3000
-      //         })
-      //       }
-      //     }).catch(e=>{
-      //       Toast({
-      //           message: '请您先验证手机号码',
-      //           position: "middle",
-      //           duration: 3000
-      //         })
-      //     })
-      //   }else {
-      //       Toast({
-      //         message: res.data.msg,
-      //         position: "middle",
-      //         duration: 3000
-      //       })
-      //   }
+      const telReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/
+      var vinReg = /^[0-9a-zA-Z]{17}$/
+      if(!telReg.test(this.userTel)){
+        Toast({
+          message: "请您输入正确的手机号码",
+          position: "middle",
+          duration: 3000
+        })
+        return
+      }
+      if(this.code.length!=4){
+        Toast({
+           message: "验证码错误，请核对后重新输入",
+          position: "middle",
+          duration: 3000
+        })
+      return
+    }
+    if(!vinReg.test(this.vin)){
+        Toast({
+         message: "车辆VIN码格式不正确，请确认后再次提交",
+          position: "middle",
+          duration: 3000
+      });
+      return
+    }
+    console.log(this.token,"token")
+      // 验证vin码
+      axios.post('/v5/car/check_vin',{
+        vin:this.vin,
+        access_token:this.token
+      }).then(res=>{
+      console.log(res)
+      console.log(res.data.code,"验证vin码的code值")
+        if(res.data.code == 0){
+          // 验证验证码和手机号
+          let param = {
+            tel: this.userTel,
+            code: this.code,
+            no_token: true
+          };
+          axios.post('v5/user/login',param).then(res => {
+            console.log(res.data.code,"验证登陆的code的值")
+            if (res.data.code === 0) {
+              this.canPay()// 验证码通过，拉取支付
+            } else {
+              console.log(res.data.msg,"验证登陆的msg的值")
+              Toast({
+                message: res.data.msg,
+                position: "middle",
+                duration: 3000
+              })
+            }
+          }).catch(e=>{
+            Toast({
+                message: '请您先验证手机号码',
+                position: "middle",
+                duration: 3000
+              })
+          })
+        }else {
+          console.log(res.data.msg,"验证vin码的msg的值")
+            Toast({
+              message: res.data.msg,
+              position: "middle",
+              duration: 3000
+            })
+        }
 
-      // }).catch(e=>{
-      // console.log('e',e)
-      // })
-      this.canPay()
+      }).catch(e=>{
+      console.log('e',e)
+      })
+     
     },
     canPay() {
-      this.aplay = true;
+      // this.aplay = true;
+      console.log("第一步")
+      let param = {
+        vin: this.vin,
+        tel: this.userTel,
+        access_token: this.token,
+        pay_method: "alipay_h5"
+
+      }
+      axios.post('v5/car_inspect/create_inspect_order',param).then((res)=>{
+        if(res.code > 0) { 
+          Toast({
+            message: res.data.msg,
+            position: 'middle',
+            duratioon: 3000
+          })
+          return
+        }
+        if (res.data && res.data.data.qr_code) {
+            window.location.href=res.data.data.qr_code
+        }
+       
+      })
+
     },
     //选择支付方式
-     choosePay(){
-        this.aplay = false;
-      },
-      onlinePay(type){
-        if(type =='ali'){
-          console.log('alipay')
-          //选择支付方式，这里需要知道后台参数，然后拉起支付，如果支付成功的话判断时间点，早上八点到晚上九点显示支付成功paysuccess页面，如果不是这个时间点就跳转到申请成功success页面
-          //如果没有支付就退回，那么直接跳转到allOrder页面
-        }else{
-          console.log('wechatPay')
-        }
-      }
+    //  choosePay(){
+    //     this.aplay = false;
+    //   },
+      // onlinePay(type){
+      //   if(type =='ali'){
+      //     console.log('alipay')
+      //     //选择支付方式，这里需要知道后台参数，然后拉起支付，如果支付成功的话判断时间点，早上八点到晚上九点显示支付成功paysuccess页面，如果不是这个时间点就跳转到申请成功success页面
+      //     //如果没有支付就退回，那么直接跳转到allOrder页面
+      //   }else{
+      //     console.log('wechatPay')
+      //   }
+      // }
   },
   //监听输入的手机号和验证码
   watch: {
