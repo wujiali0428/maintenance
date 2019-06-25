@@ -18,4 +18,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+/* .Indicator {
+  width: 0.2rem
+} */
+.mint-indicator-spin{
+display: block !important;
+}
+.mint-indicator-spin>div{
+margin: 0 auto !important;
+}
 </style>

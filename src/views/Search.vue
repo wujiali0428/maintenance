@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import { Toast } from "mint-ui";
+import { Toast,Indicator } from "mint-ui";
 import axios from 'axios';
 export default {
   data() {
@@ -74,15 +74,112 @@ export default {
       where: false,   //显示隐藏vin码在哪里的图片
       token: window.localStorage.getItem('token'),   //用户token信息
       opacity:0.6,   //验证码按钮的颜色
-      aplay: false    //选择支付模块显示隐藏
+      aplay: false,    //选择支付模块显示隐藏
+      orderId: ''   //  
     };
   },
   mounted() {
     this.getPrice();
     document.getElementById('title').innerHTML = this.$route.name
-
+    //支付返回时，判断是否支付成功
+    console.log(window.localStorage.getItem('tag'))
+    if(window.localStorage.getItem('tag')){
+    // if(true){
+      Indicator.open({text:"订单状态查询中"});
+      let params = {
+        status: '-1',
+        limit: '2000',
+        access_token: this.token
+      }
+      
+      //获取后台数据添加的第一项的数组对应的Id，用来向后台发送id验证是否支付成功
+      axios.post('grey/v5/car_inspect/get_inspect_order_list',params).then(res => {
+        if(res.data.code>0){
+          Toast({
+            message: res.data.msg,
+            duratioon: 2000,
+          })
+        }else{
+          if (res.data.code == 0 && res.data.data&& res.data.data.list){
+            const lists = res.data.data.list[0]
+            this.orderId = lists.Id
+            
+          } 
+          // console.log(this.orderId,"??????")
+        }
+      })
+    
+      
+        // console.log("aaaa")
+        let numberQuery = 0;
+        window.timer = window.setInterval(()=>{
+          numberQuery++;
+          if(numberQuery > 15) {
+            window.clearInterval(window.timer);
+            Indicator.close();
+            Toast({
+              message : '查询失败',
+              position: 'middle',
+              duratioon: 3000
+            })
+            // return
+          }
+      
+          let param = {
+            order_id: this.orderId.toString(),
+            access_token: this.token
+          }
+          // console.log(param,"::::::")
+          //0:待支付  1:已支付报告生成中  2:报告已生成 3:已退款 4:已取消 5:退款中
+          axios.post('grey/v5/car_inspect/get_by_id',param).then(res=>{
+            console.log(res.data.code,res.data.data)
+            if(res.data.code == 0){
+              console.log("查看订单状态接口code为0时候")
+              if(res.data && res.data.data) {
+                console.log("查看订单状态接口有res.data和res.data.data的时候")
+                window.clearInterval(window.timer);
+                Indicator.close();
+                window.localStorage.removeItem("tag");
+                console.log(res.data.data.Status)
+                if(res.data.data.Status == 0) {
+                  console.log("判断status为0的时候执行")
+                    Toast({
+                      message: '订单未支付',
+                      duratioon: 3000
+                    })
+                  this.$router.push('/order');
+                }else if(res.data.data.Status == 1){
+                   console.log("判断status为1的时候执行")
+                  // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
+                  // 不是的话跳转到申请成功Success页面
+                  var date = new Date();
+                  var year = date.getFullYear();
+                  var month = date.getMonth() + 1;
+                  var strDate = date.getDate();
+                  // console.log(year,month,strDate)
+                  var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
+                  var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
+                  var nowTime = new Date().getTime();
+                  console.log(eight,night,nowTime)
+                  if(nowTime>eight&&nowTime<night){
+                      this.$router.push('/PaySuccess');
+                  }else{
+                      this.$router.push('/Success');
+                  }
+                  
+                }else{
+                  //除了Stauts为0和1之外其余都跳转到order页面
+                  this.$router.push('/order');
+                }
+              }
+            }
+          })
+        },1000)
+      
+    }
   },
   methods: {
+   
     //获取价格
     getPrice(){
       axios.post('grey/v5/car/get/order_price',{access_token:this.token}).then(res=>{
@@ -203,12 +300,15 @@ export default {
         .then((res) => {
           console.log("res",res)
           if (res.data.code === 0) {
-            if (res.data && res.data.img_url) {
-              // self.driveUrl = res.data.img_url;
-              Toast({ message: '行驶证识别成功，请您核对信息是否准确' });
-              // this.vehicleInfo(res.data, self.driveUrl);
+            if (res.data.data && res.data.data.vin) {
+              Toast({ 
+                message: '行驶证识别成功，请您核对信息是否准确' 
+              });
+              this.vin = res.data.data.vin
             } else {
-              Toast({ message: '行驶证识别失败，请重新上传识别' });
+              Toast({ 
+                message: '行驶证识别失败，请重新上传识别' 
+              });
             }
           } else {
               Toast({ message: res.data.msg });
@@ -315,17 +415,18 @@ export default {
             no_token: true
           };
           axios.post('grey/v5/user/login',param).then(res => {
-            console.log(res.data.code,"验证登陆的code的值")
-            if (res.data.code === 0) {
-              this.canPay()// 验证码通过，拉取支付
-            } else {
-              console.log(res.data.msg,"验证登陆的msg的值")
+            // console.log(res.data.code,"验证登陆的code的值")
+            if(res.data.code>0) {
               Toast({
                 message: res.data.msg,
                 position: "middle",
                 duration: 3000
               })
+              return
             }
+            if (res.data.code === 0) {
+              this.canPay()// 验证码通过，拉取支付
+            } 
           }).catch(e=>{
             Toast({
                 message: '请您先验证手机号码',
@@ -367,7 +468,11 @@ export default {
           return
         }
         if (res.data && res.data.data.qr_code) {
-            window.location.href=res.data.data.qr_code
+          //支付的时候加一个标识，为了判断是不是由支付跳转到支付宝之后返回的页面，
+          //以便于轮询查看订单是否支付之后跳转页面
+           window.localStorage.setItem('tag','tag')
+           //接口返回跳转到支付宝的路径
+           window.location.href=res.data.data.qr_code 
         }
        
       })
@@ -472,7 +577,7 @@ export default {
 
 /* 表单中的每一项 */
 .search_info>div{
-  border-bottom: 0.01rem solid rgb(237, 233, 233,0.6);
+  border-bottom: 0.01rem solid rgb(237, 233, 233,1);
   margin: 0 0.16rem;
   height: 0.46rem;
   display: flex;
@@ -647,4 +752,5 @@ label {
 .wxpay>div:last-child>p{
   /* line-height: 0.8rem; */
 }
+
 </style>

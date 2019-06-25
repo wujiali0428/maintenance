@@ -60,10 +60,70 @@ export default {
         
         }
     },
+    mounted(){
+        if(window.localStorage.getItem('order')){
+            console.log("有缓存")
+             Indicator.open("订单状态查询中");
+            let numberQuery = 0;
+            window.timer = window.setInterval(()=>{
+                numberQuery++;
+                if(numberQuery>20) {
+                    window.clearInterval(window.timer);
+                    Indicator.close();
+                    Toast({
+                        message: '查询失败',
+                        duration: 3000
+                    })
+                }
+                let param = {
+                    order_id: window.localStorage.getItem('order').toString(),
+                    access_token: this.token
+                }
+                axios.post('grey/v5/car_inspect/get_by_id',param).then(res=>{
+                    if(res.data.code == 0) {
+                        if(res.data && res.data.data) {
+                            window.clearInterval(window.timer);
+                            Indicator.close();
+                            window.localStorage.removeItem("order");
+                            if(res.data.data.Status == 0){
+                                Toast({
+                                    message: '订单未付款',
+                                    duration: 2000
+                                })
+                            this.$router.push('/order')
+                            }else if(res.data.data.Status == 1){
+                                 console.log("判断status为1的时候执行")
+                                // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
+                                // 不是的话跳转到申请成功Success页面
+                                var date = new Date();
+                                var year = date.getFullYear();
+                                var month = date.getMonth() + 1;
+                                var strDate = date.getDate();
+                                // console.log(year,month,strDate)
+                                var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
+                                var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
+                                var nowTime = new Date().getTime();
+                                console.log(eight,night,nowTime)
+                                if(nowTime>eight&&nowTime<night){
+                                    this.$router.push('/PaySuccess');
+                                }else{
+                                    this.$router.push('/Success');
+                                }
+                            }else{
+                                this.$router.push('/order');
+                            }
+                        }
+                    }
+                })
+
+            })
+        }
+    },
     methods:{
         //获取订单
         query(){
             console.log('chaxun',this.selected)
+            Indicator.open();
             let self = this
             let param = {
                 status: this.selected,
@@ -71,10 +131,10 @@ export default {
                 access_token:this.token
             }
             console.log(param,"获取订单向后台发送的param的值")
-            // Indicator.open("正在查询。。。");
+            
             axios.post('grey/v5/car_inspect/get_inspect_order_list', param).then(res => {
                 console.log(res)
-                //  Indicator.close();
+                 Indicator.close();
                 if (res.data.code == 0 && res.data.data && res.data.data.list) {
                     const lists = res.data.data.list.map(item=>{
                     // console.log(this.getStatusStr(item.Status),item.Status)
@@ -88,14 +148,13 @@ export default {
                 }
             //    console.log(this.list)
             }).catch(e=>{
-                // console.log(e)
-                // Indicator.close();
                 Toast({
                     message: '查询失败',
                     position: "middle",
                     duration: 3000
                 })
             })
+            Indicator.close();
         },
         //通过后台返回的参数，转化为文字状态，在上面调用此函数，并保存到list数组中
          getStatusStr(state){
@@ -142,7 +201,6 @@ export default {
              })
         },
         onlinePay(id) {
-            console.log("第一步")
             let param = {
                 order_id: id.toString(),
                 access_token: this.token
@@ -158,6 +216,8 @@ export default {
                 return
                 }
                 if (res.data && res.data.data.qr_code) {
+                    console.log(id)
+                    window.localStorage.setItem('order',id)
                     window.location.href=res.data.data.qr_code
                 }
             
@@ -171,11 +231,11 @@ export default {
     },
     created(){
         this.query();
+        console.log(window.localStorage.getItem('order'))
     },
     watch:{
         selected(){
             this.query();
-            console.log(this.selected);
         }
     }
 
