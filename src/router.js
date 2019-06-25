@@ -100,7 +100,8 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.login_require)) {
       if (!window.localStorage.getItem("user")) {
         next({
-          path: '/login'
+          path: '/login',
+          query:{ path:to.path}
         })
       } else {
         next()

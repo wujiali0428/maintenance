@@ -43,7 +43,11 @@ export default {
         // login: true
     }
   },
+  created() {
+    console.log(window.localStorage.getItem('user'))
+  },
   mounted() {
+    // console.log(window.localStorage.getItem('user'))
     document.getElementById('title').innerHTML = this.$route.name
   },
   components: {
