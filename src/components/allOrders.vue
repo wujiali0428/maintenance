@@ -67,7 +67,7 @@ export default {
             let numberQuery = 0;
             window.timer = window.setInterval(()=>{
                 numberQuery++;
-                if(numberQuery>20) {
+                if(numberQuery>15) {
                     window.clearInterval(window.timer);
                     Indicator.close();
                     Toast({
@@ -225,7 +225,7 @@ export default {
         },
         //查看报告
         gotoReport(id) {
-            location.href = `https://mys4s.cn/static/wb/index.html#/Report/{{id}}?token={{this.token}}`
+            location.href = `https://mys4s.cn/static/wb/index.html#/Report/${id}?token=${this.token}`
         },
        
     },

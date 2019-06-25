@@ -1,11 +1,11 @@
 <template>
   <div class="home">
     <div class="bottom">
-      <router-link to="/" class="more">
+      <router-link to="/" class="more" :replace="true">
           <img src="../assets/more.png">
           <div>首页</div>
       </router-link>
-      <router-link to="/user" class="mine">
+      <router-link to="/user" class="mine" :replace="true">
           <img src="../assets/user.png">
           <div>我的</div>
      </router-link>

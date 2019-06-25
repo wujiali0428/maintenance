@@ -117,7 +117,8 @@ export default {
           });
 
           // this.$router.push('/user');
-          this.$router.push(this.$route.query.path);
+          this.$router.replace(this.$route.query.path);
+          
         }
       });
     },

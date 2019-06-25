@@ -99,17 +99,16 @@ export default {
             message: res.data.msg,
             duratioon: 2000,
           })
+
         }else{
           if (res.data.code == 0 && res.data.data&& res.data.data.list){
             const lists = res.data.data.list[0]
             this.orderId = lists.Id
             
           } 
-          // console.log(this.orderId,"??????")
         }
       })
     
-      
         // console.log("aaaa")
         let numberQuery = 0;
         window.timer = window.setInterval(()=>{
@@ -590,6 +589,7 @@ export default {
   outline: none;
   flex: 1;
   width: 0;
+  font-size: 0.14rem;
 }
 label {
   display: inline-block;
@@ -643,6 +643,7 @@ label {
   font-size: 0.12rem;
   flex-shrink: 1;
   width:1rem;
+  padding: 0.05rem 0;
 }
 /* 查询价格 */
 .price {

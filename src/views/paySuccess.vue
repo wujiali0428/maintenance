@@ -1,8 +1,8 @@
 <template>
     <div class="successful">
         <div class="top">
-            <div>
-                <img src="" alt="">
+             <div style="text-align:center">
+                <img src="@/assets/success-icon.png" style="width：0.9rem;height:0.9rem;">
             </div>
             <h1>支付成功，报告生成中…</h1>
         </div>
@@ -14,7 +14,9 @@
             <div @click="goIndex">返回首页</div>
         </div>
         <div>
-            广告位
+            <div style="text-align:center;width:100%;margin-top:0.5rem">
+                <img src="@/assets/success_ad.png" alt="" style="width:100%">
+            </div>
         </div>
     </div>
 </template>
@@ -30,10 +32,10 @@ export default {
     },
     methods:{
         details (){
-        console.log("details")
+          this.$router.push('/Order')
         },
         goIndex(){
-        console.log("goIndex")
+          this.$router.push('/')
         }
     }
 }
