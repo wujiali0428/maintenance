@@ -21,26 +21,6 @@
         <div>暂无订单</div>
     </div>
 
-    <!-- <div class="content">
-        <div style="padding-bottom: 0.2rem">
-            <div class="title">
-                <span style="float:left">订单号：1231231231231</span>
-            </div>
-            <div class="con">
-                <div>下单时间：<span>132123123123</span></div>
-                <div>联系电话：<span>15232123212</span></div>
-                <div>车辆VIN码：<span>as1234ewqwe3212</span></div>
-                <div>支付金额：<span>￥29</span></div>
-                <div>订单状态：<span>已支付，报告已生成</span></div>
-            </div>
-            <div class="write blue" @click="gotoReport(value.ReportId)">查看报告</div>
-        </div>
-    </div>
-    <div class="empty">
-        <img src="https://s4s-imges.oss-cn-hangzhou.aliyuncs.com/img/credit3x.png"/>
-        <div>暂无订单</div>
-    </div> -->
-
 </div>
 </template>
 <script>

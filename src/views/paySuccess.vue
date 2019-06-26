@@ -32,10 +32,10 @@ export default {
     },
     methods:{
         details (){
-          this.$router.push('/Order')
+          this.$router.replace('/Order')
         },
         goIndex(){
-          this.$router.push('/')
+          this.$router.replace('/')
         }
     }
 }

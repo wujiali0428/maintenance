@@ -182,7 +182,7 @@ export default {
     //获取价格
     getPrice(){
       axios.post('/v5/car/get/order_price',{access_token:this.token}).then(res=>{
-        console.log(res)
+        // console.log(res)
         if(res.data.code ===0 ){
             this.realPay= (res.data.data.real_pay/100).toFixed(2) || 29.00
             this.total= (res.data.data.total_price/100).toFixed(2) || 39.00
@@ -335,15 +335,17 @@ export default {
             Toast({
               message: res.data.msg,
               position: "middle",
-              duration: 3000
+              duration: 2000
             });
             clearInterval(this.timer);
-            this.btnText = "获取验证码"
+            this.btnText = "获取验证码";
+            this.canGetCode = false;
+          
           } else {
             Toast({
               message: "发送成功",
               position: "middle",
-              duration: 3000
+              duration: 2000
             });
           }
         })
@@ -352,7 +354,7 @@ export default {
           Toast({
             message: "发送验证码失败，请重试",
             position: "middle",
-            duration: 3000
+            duration: 2000
           });
           clearInterval(this.timer);
           this.canGetCode = false;
@@ -362,6 +364,8 @@ export default {
         });
     },
     enableResend: function() {
+      this.opacity = 0.5;
+      this.canGetCode = true;
       this.btnText = this.leftTime-- + "s 后重发";
       if (this.leftTime === 0) {
         this.canGetCode = false;
@@ -372,38 +376,31 @@ export default {
     },
     //确认支付按钮
     handlePay: function() {
-      Indicator.open();
       const telReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/
       var vinReg = /^[0-9a-zA-Z]{17}$/
       if(!telReg.test(this.userTel)){
-        Indicator.close();
         Toast({
           message: "请您输入正确的手机号码",
           position: "middle",
-          duration: 3000
-        })  
+          duration: 2000
+        }) 
         return
       }
       if(this.code.length!=4){
-        console.log("验证验证码")
-        Indicator.close();
         Toast({
            message: "验证码错误，请核对后重新输入",
           position: "middle",
-          duration: 3000
+          duration: 2000
         })
-      
       return
     }
     if(!vinReg.test(this.vin)){
-      console.log("验证vin码")
-        Indicator.close();
         Toast({
          message: "车辆VIN码格式不正确，请确认后再次提交",
           position: "middle",
-          duration: 3000
-      });
-      return
+          duration: 2000
+        });
+        return
     }
     console.log(this.token,"token")
       // 验证vin码
@@ -415,6 +412,7 @@ export default {
       console.log(res)
       console.log(res.data.code,"验证vin码的code值")
         if(res.data.code == 0){
+          
           // 验证验证码和手机号
           let param = {
             tel: this.userTel,
@@ -424,37 +422,34 @@ export default {
           axios.post('/v5/user/login',param).then(res => {
             // console.log(res.data.code,"验证登陆的code的值")
             if(res.data.code>0) {
-              Indicator.close();
               Toast({
                 message: res.data.msg,
                 position: "middle",
-                duration: 3000
+                duration: 2000
               })
               return
             }
             if (res.data.code === 0) {
+              Indicator.open();
               this.canPay()// 验证码通过，拉取支付
             } 
           }).catch(e=>{
-            Indicator.close();
             Toast({
                 message: '请您先验证手机号码',
                 position: "middle",
-                duration: 3000
+                duration: 2000
               })
           })
         }else {
-          Indicator.close();
           console.log(res.data.msg,"验证vin码的msg的值")
             Toast({
               message: res.data.msg,
               position: "middle",
-              duration: 3000
+              duration: 2000
             })
         }
 
       }).catch(e=>{
-          Indicator.close();
           console.log('e',e)
       })
      
@@ -476,7 +471,7 @@ export default {
           Toast({
             message: res.data.msg,
             position: 'middle',
-            duratioon: 3000
+            duratioon: 2000
           })
           return
         }
@@ -552,10 +547,10 @@ export default {
       // }
     // },
     vin: function(val) {
-      console.log(val.length)
+      // console.log(val.length)
       if(val.length == 17) {
         var vinReg = /^[0-9a-zA-Z]{17}$/
-        console.log(vinReg.test(val))
+        // console.log(vinReg.test(val))
           if(!vinReg.test(val)){
             Toast({
               message:'车辆VIN码格式不正确，请确认后再次提交',

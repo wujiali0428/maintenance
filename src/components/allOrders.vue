@@ -64,10 +64,12 @@ export default {
         if(window.localStorage.getItem('order')){
             console.log("有缓存")
              Indicator.open("订单状态查询中");
-            let numberQuery = 0;
-            window.timer = window.setInterval(()=>{
+             let numberQuery = 0;
+             window.timer = window.setInterval(()=>{
                 numberQuery++;
-                if(numberQuery>15) {
+                console.log(numberQuery)
+                if(numberQuery > 15) {
+                    console.log("numberQuery > 15条件成立")
                     window.clearInterval(window.timer);
                     Indicator.close();
                     Toast({
@@ -81,6 +83,7 @@ export default {
                     access_token: this.token
                 }
                 axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
+                    console.log("查看>15的时候是否执行")
                     if(res.data.code == 0) {
                         if(res.data && res.data.data) {
                             
@@ -93,7 +96,8 @@ export default {
                                     duration: 2000
                                 })
                             this.$router.push('/order')
-                            }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
+                            // }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
+                             }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
                                  console.log("判断status为1的时候执行")
                                 // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
                                 // 不是的话跳转到申请成功Success页面
@@ -111,7 +115,7 @@ export default {
                                 var nowTime = new Date().getTime();
 
                                 console.log(eight,night,nowTime)
-                                if(nowTime>eight&&nowTime<night){
+                                if(nowTime>eight && nowTime<night){
                                     this.$router.push('/PaySuccess');
                                 }else{
                                     this.$router.push('/Success');
@@ -123,13 +127,13 @@ export default {
                     }
                 })
 
-            })
+            },1000)
         }
     },
     methods:{
         //获取订单
         query(){
-            console.log('chaxun',this.selected)
+            // console.log('chaxun',this.selected)
             Indicator.open();
             let self = this
             let param = {
@@ -137,10 +141,10 @@ export default {
                 limit: '2000',
                 access_token:this.token
             }
-            console.log(param,"获取订单向后台发送的param的值")
+            // console.log(param,"获取订单向后台发送的param的值")
             
             axios.post('/v5/car_inspect/get_inspect_order_list', param).then(res => {
-                console.log(res)
+                // console.log(res)
                  Indicator.close();
                 if (res.data.code == 0 && res.data.data && res.data.data.list) {
                     const lists = res.data.data.list.map(item=>{
@@ -239,7 +243,7 @@ export default {
     },
     created(){
         this.query();
-        console.log(window.localStorage.getItem('order'))
+        // console.log(window.localStorage.getItem('order'))
     },
     watch:{
         selected(){

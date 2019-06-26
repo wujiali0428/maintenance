@@ -45,7 +45,7 @@ export default {
     }
   },
   created() {
-    console.log(window.localStorage.getItem('user'))
+    // console.log(window.localStorage.getItem('user'))
   },
   mounted() {
     // console.log(window.localStorage.getItem('user'))
