@@ -40,7 +40,7 @@ export default {
       limit: 2000,
       access_token:window.localStorage.getItem('token')
     }
-    axios.post('grey/v5/car_inspect/get_inspect_order_list',param).then((res)=>{
+    axios.post('/v5/car_inspect/get_inspect_order_list',param).then((res)=>{
       console.log("dingdan",res)
     }).catch((err)=>{
       console.log('err',err)

@@ -42,6 +42,9 @@
         温馨提示：保养记录报告来源于第三方，报告会以短信告知，预计30分钟内收到报告。（非工作时段报告预计次日生成）
         </p>
     </div>
+ 
+       <div class="call">本服务由齐车大圣提供，客服电话：<a href="tel:400-000-1199">400-000-1199</a></div>
+   
     <!-- 选择支付方式 start-->
     <div v-if='aplay' class="mask">
       <div class="method">
@@ -93,23 +96,22 @@ export default {
       }
       
       //获取后台数据添加的第一项的数组对应的Id，用来向后台发送id验证是否支付成功
-      axios.post('grey/v5/car_inspect/get_inspect_order_list',params).then(res => {
+      axios.post('/v5/car_inspect/get_inspect_order_list',params).then(res => {
         if(res.data.code>0){
           Toast({
             message: res.data.msg,
             duratioon: 2000,
           })
+
         }else{
           if (res.data.code == 0 && res.data.data&& res.data.data.list){
             const lists = res.data.data.list[0]
             this.orderId = lists.Id
             
           } 
-          // console.log(this.orderId,"??????")
         }
       })
     
-      
         // console.log("aaaa")
         let numberQuery = 0;
         window.timer = window.setInterval(()=>{
@@ -122,7 +124,7 @@ export default {
               position: 'middle',
               duratioon: 3000
             })
-            // return
+            return
           }
       
           let param = {
@@ -131,28 +133,24 @@ export default {
           }
           // console.log(param,"::::::")
           //0:待支付  1:已支付报告生成中  2:报告已生成 3:已退款 4:已取消 5:退款中
-          axios.post('grey/v5/car_inspect/get_by_id',param).then(res=>{
-            console.log(res.data.code,res.data.data)
+          axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
+            
             if(res.data.code == 0){
-              console.log("查看订单状态接口code为0时候")
               if(res.data && res.data.data) {
-                console.log("查看订单状态接口有res.data和res.data.data的时候")
                 window.clearInterval(window.timer);
                 Indicator.close();
                 window.localStorage.removeItem("tag");
-                console.log(res.data.data.Status)
                 if(res.data.data.Status == 0) {
-                  console.log("判断status为0的时候执行")
                     Toast({
                       message: '订单未支付',
                       duratioon: 3000
                     })
                   this.$router.push('/order');
-                }else if(res.data.data.Status == 1){
+                }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
                    console.log("判断status为1的时候执行")
                   // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
                   // 不是的话跳转到申请成功Success页面
-                  var date = new Date();
+                   var date = new Date();
                   var year = date.getFullYear();
                   var month = date.getMonth() + 1;
                   var strDate = date.getDate();
@@ -160,6 +158,7 @@ export default {
                   var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
                   var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
                   var nowTime = new Date().getTime();
+
                   console.log(eight,night,nowTime)
                   if(nowTime>eight&&nowTime<night){
                       this.$router.push('/PaySuccess');
@@ -182,7 +181,7 @@ export default {
    
     //获取价格
     getPrice(){
-      axios.post('grey/v5/car/get/order_price',{access_token:this.token}).then(res=>{
+      axios.post('/v5/car/get/order_price',{access_token:this.token}).then(res=>{
         console.log(res)
         if(res.data.code ===0 ){
             this.realPay= (res.data.data.real_pay/100).toFixed(2) || 29.00
@@ -296,7 +295,7 @@ export default {
       var formData=new FormData();
       formData.append('image',img);
       formData.append('access_token',this.token);
-      axios.post('grey/v2/car/recognize_vehiclecard', formData)
+      axios.post('/v2/car/recognize_vehiclecard', formData)
         .then((res) => {
           console.log("res",res)
           if (res.data.code === 0) {
@@ -327,7 +326,7 @@ export default {
         tel: this.userTel
       };
       axios({
-          url:"grey/v5/user/code",
+          url:"/v5/user/code",
           method: 'post',
           data: {tel: this.userTel}
           }).then((res) => {
@@ -373,25 +372,32 @@ export default {
     },
     //确认支付按钮
     handlePay: function() {
+      Indicator.open();
       const telReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/
       var vinReg = /^[0-9a-zA-Z]{17}$/
       if(!telReg.test(this.userTel)){
+        Indicator.close();
         Toast({
           message: "请您输入正确的手机号码",
           position: "middle",
           duration: 3000
-        })
+        })  
         return
       }
       if(this.code.length!=4){
+        console.log("验证验证码")
+        Indicator.close();
         Toast({
            message: "验证码错误，请核对后重新输入",
           position: "middle",
           duration: 3000
         })
+      
       return
     }
     if(!vinReg.test(this.vin)){
+      console.log("验证vin码")
+        Indicator.close();
         Toast({
          message: "车辆VIN码格式不正确，请确认后再次提交",
           position: "middle",
@@ -401,10 +407,11 @@ export default {
     }
     console.log(this.token,"token")
       // 验证vin码
-      axios.post('grey/v5/car/check_vin',{
+      axios.post('/v5/car/check_vin',{
         vin:this.vin,
         access_token:this.token
       }).then(res=>{
+        console.log("发送请求")
       console.log(res)
       console.log(res.data.code,"验证vin码的code值")
         if(res.data.code == 0){
@@ -414,9 +421,10 @@ export default {
             code: this.code,
             no_token: true
           };
-          axios.post('grey/v5/user/login',param).then(res => {
+          axios.post('/v5/user/login',param).then(res => {
             // console.log(res.data.code,"验证登陆的code的值")
             if(res.data.code>0) {
+              Indicator.close();
               Toast({
                 message: res.data.msg,
                 position: "middle",
@@ -428,6 +436,7 @@ export default {
               this.canPay()// 验证码通过，拉取支付
             } 
           }).catch(e=>{
+            Indicator.close();
             Toast({
                 message: '请您先验证手机号码',
                 position: "middle",
@@ -435,6 +444,7 @@ export default {
               })
           })
         }else {
+          Indicator.close();
           console.log(res.data.msg,"验证vin码的msg的值")
             Toast({
               message: res.data.msg,
@@ -444,11 +454,13 @@ export default {
         }
 
       }).catch(e=>{
-      console.log('e',e)
+          Indicator.close();
+          console.log('e',e)
       })
      
     },
     canPay() {
+      
       // this.aplay = true;
       console.log("第一步")
       let param = {
@@ -458,8 +470,9 @@ export default {
         pay_method: "alipay_h5"
 
       }
-      axios.post('grey/v5/car_inspect/create_inspect_order',param).then((res)=>{
+      axios.post('/v5/car_inspect/create_inspect_order',param).then((res)=>{
         if(res.code > 0) { 
+          Indicator.close();
           Toast({
             message: res.data.msg,
             position: 'middle',
@@ -471,6 +484,7 @@ export default {
           //支付的时候加一个标识，为了判断是不是由支付跳转到支付宝之后返回的页面，
           //以便于轮询查看订单是否支付之后跳转页面
            window.localStorage.setItem('tag','tag')
+           Indicator.close();
            //接口返回跳转到支付宝的路径
            window.location.href=res.data.data.qr_code 
         }
@@ -590,6 +604,7 @@ export default {
   outline: none;
   flex: 1;
   width: 0;
+  font-size: 0.14rem;
 }
 label {
   display: inline-block;
@@ -643,6 +658,7 @@ label {
   font-size: 0.12rem;
   flex-shrink: 1;
   width:1rem;
+  padding: 0.05rem 0;
 }
 /* 查询价格 */
 .price {
@@ -752,5 +768,19 @@ label {
 .wxpay>div:last-child>p{
   /* line-height: 0.8rem; */
 }
-
+.call {
+    font-size: 0.14rem;
+    /* color: rgb(156, 158, 168); */
+    color: #9C9EA8;
+    text-align: center;
+    position: relative;
+    /* z-index: 10000; */
+    bottom:  1.2rem;
+    padding-bottom: 0.4rem;
+    padding-top: 0.2rem;
+    /* background: #f0f; */
+  }
+  .call a {
+    color: #537EFF;
+  }
 </style>

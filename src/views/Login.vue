@@ -2,7 +2,7 @@
   <div class="container">
     <div class="login">
       <div class="login-head">欢迎使用
-        <span>码上挪车</span>
+        <span>车况查询</span>
       </div>
       <mt-field label="手机号码" placeholder="请输入手机号" type="tel" v-model="userTel" :attr="{ maxlength: 11 }"></mt-field>
       <mt-field style="border-bottom: 0" label="验证码" placeholder="请输入验证码" type="number" v-model="code" :attr="{ maxlength: 4 }" disableClear>
@@ -49,7 +49,7 @@ export default {
         tel: this.userTel
       };
       axios({
-          url:"grey/v5/user/code",
+          url:"/v5/user/code",
           method: 'post',
           data: {tel: this.userTel}
           }).then((res) => {
@@ -95,7 +95,7 @@ export default {
         tel: this.userTel,
         code: this.code
       };
-      axios.post("grey/v5/user/login", param).then((res) => {
+      axios.post("/v5/user/login", param).then((res) => {
          console.log(res.data.code,"登陆页面login的code值")
         if (res.data.code > 0) {
           Toast({
@@ -117,7 +117,8 @@ export default {
           });
 
           // this.$router.push('/user');
-          this.$router.push(this.$route.query.path);
+          this.$router.replace(this.$route.query.path);
+          
         }
       });
     },

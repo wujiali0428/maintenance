@@ -13,6 +13,7 @@
         温馨提示：保养记录报告来源于第三方，报告会以短信告知，预计30分钟内收到报告。（非工作时段报告预计次日生成）
         </p>
     </div>
+    <div class="call">本服务由齐车大圣提供，客服电话：<a href="tel:400-000-1199">400-000-1199</a></div>
     <router-link to="/search">
         <div class="search">立即查询</div>
     </router-link>
@@ -143,6 +144,20 @@ export default {
     align-items: center;
     justify-content: center;
   }
-  
+  .call {
+    font-size: 0.14rem;
+    /* color: rgb(156, 158, 168); */
+    color: #9C9EA8;
+    text-align: center;
+    position: relative;
+    /* z-index: 10000; */
+    bottom:  1.2rem;
+    padding-bottom: 0.4rem;
+    padding-top: 0.2rem;
+    /* background: #f0f; */
+  }
+  .call a {
+    color: #537EFF;
+  }
 </style>
 

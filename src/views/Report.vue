@@ -1,7 +1,7 @@
 <template>
 <div>
     <div class="content" v-if="list.length>0">
-        <div v-for='value in list' :key='value'>
+        <div v-for='value in list' :key='value.Id' style="padding-bottom: 0.2rem">
             <div class="title">
                 <span style="float:left">订单号：{{value.OrderNo || '-'}}</span>
             </div>
@@ -67,22 +67,22 @@ export default {
             location.href = "https://mys4s.cn/static/wb/index.html#/Report/"+id+"?token="+this.token
         },
         query(){
+            Indicator.open("正在查询...");
             console.log('chaxun',this.selected)
             let self = this
             let param = {
-                status: this.selected,
-                limit: 2000
+                status: "2",
+                limit: '2000',
+                access_token: this.token
             }
-            // Indicator.open("正在查询。。。");
-            axios.post('grey/v5/car_inspect/get_inspect_order_list', param).then(res => {
-                console.log(res)
-                //  Indicator.close();
-                if (res.code == 0 && res.data.data && res.data.data.list) {
-                        this.list = res.data.data.lists
+            
+            axios.post('/v5/car_inspect/get_inspect_order_list', param).then(res => {
+                 Indicator.close();
+                if (res.data.code == 0 && res.data.data && res.data.data.list) {
+                        this.list = res.data.data.list
                 }
             }).catch(e=>{
-                // console.log(e)
-                // Indicator.close();
+                Indicator.close();
                 Toast({
                     message: '查询失败',
                     position: "middle",
@@ -90,23 +90,6 @@ export default {
                 })
             })
         },
-        
-        // getStatusStr(state){
-        //     switch(state){
-        //     case 0:
-        //     return '待支付';
-        //     case 1:
-        //     return '已支付，等待报告生成';
-        //     case 2:
-        //     return '已支付，报告已生成';
-        //     case 3:
-        //     return '已退款，报告生成失败';
-        //     case 4:
-        //     return '已取消';
-        //     default: 
-        //     return '无';
-        //     }
-        // },
     },
     created(){
         this.query();
