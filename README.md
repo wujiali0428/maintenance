@@ -27,3 +27,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+线上地址： https://mys4s.cn/h5/maintenance/index.html#/?source=cmbapp
+?source=cmbapp后面为招商银行的渠道号
+oss上线位置 ： s4s-html---》maintenance

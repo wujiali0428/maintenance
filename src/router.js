@@ -16,7 +16,7 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      name: '维保查询',
+      name: '车况查询',
       component: Home,
     },
     {
