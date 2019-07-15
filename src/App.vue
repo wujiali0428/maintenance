@@ -8,6 +8,15 @@
     <router-view/>
   </div>
 </template>
+<script>
+export default {
+  mounted(){
+    window._hmt.push(['_trackPageview', window.location.href.substring(window.location.href.indexOf(window.location.pathname))]);
+    console.log(window.location.pathname)
+    console.log(window.location.href.substring(window.location.href.indexOf(window.location.pathname)))
+  }
+}
+</script>
 
 <style>
 body {

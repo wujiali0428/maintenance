@@ -48,8 +48,20 @@ export default {
     // console.log(window.localStorage.getItem('user'))
   },
   mounted() {
+    //source=cmbapp为招商银行的渠道号
+    console.log(this.$route.query.source,"@@@@")
+
+    if(!this.$route.query.source){
+        console.log('渠道号为空')
+    }else {
+      console.log('渠道号不为空')
+       window.localStorage.setItem('source',this.$route.query.source);
+    }
+    // let source = window.localStorage.setItem('source',this.$route.query.source);
+
     // console.log(window.localStorage.getItem('user'))
     document.getElementById('title').innerHTML = this.$route.name
+    
   },
   components: {
     Tabbar

@@ -45,7 +45,7 @@
 </div>
 </template>
 <script>
-import { Toast,Indicator,MessageBox } from 'mint-ui';
+import { Toast,MessageBox,Indicator } from 'mint-ui';
 import axios from 'axios'
 
 export default {
@@ -61,74 +61,76 @@ export default {
         }
     },
     mounted(){
-        if(window.localStorage.getItem('order')){
-            console.log("有缓存")
-             Indicator.open("订单状态查询中");
-             let numberQuery = 0;
-             window.timer = window.setInterval(()=>{
-                numberQuery++;
-                console.log(numberQuery)
-                if(numberQuery > 15) {
-                    console.log("numberQuery > 15条件成立")
-                    window.clearInterval(window.timer);
-                    Indicator.close();
-                    Toast({
-                        message: '查询失败',
-                        duration: 3000
-                    })
-                    return
-                }
-                let param = {
-                    order_id: window.localStorage.getItem('order').toString(),
-                    access_token: this.token
-                }
-                axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
-                    console.log("查看>15的时候是否执行")
-                    if(res.data.code == 0) {
-                        if(res.data && res.data.data) {
-                            
-                            if(res.data.data.Status == 0){
-                                window.clearInterval(window.timer);
-                                Indicator.close();
-                                window.localStorage.removeItem("order");
-                                Toast({
-                                    message: '订单未付款',
-                                    duration: 2000
-                                })
-                            this.$router.push('/order')
-                            // }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
-                             }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
-                                 console.log("判断status为1的时候执行")
-                                // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
-                                // 不是的话跳转到申请成功Success页面
-                                window.clearInterval(window.timer);
-                                Indicator.close();
-                                window.localStorage.removeItem("order");
+        // Indicator.close();
+        console.log(window.localStorage.getItem('order'),"!!!!!")
+        // if(window.localStorage.getItem('order')){
+        //     console.log("有缓存")
+        //      Indicator.open("订单状态查询中");
+        //      let numberQuery = 0;
+        //      window.timer = window.setInterval(()=>{
+        //         numberQuery++;
+        //         console.log(numberQuery)
+        //         if(numberQuery > 15) {
+        //             console.log("numberQuery > 15条件成立")
+        //             window.clearInterval(window.timer);
+        //             Indicator.close();
+        //             Toast({
+        //                 message: '查询失败',
+        //                 duration: 3000
+        //             })
+        //             return
+        //         }
+        //         let param = {
+        //             order_id: window.localStorage.getItem('order').toString(),
+        //             access_token: this.token
+        //         }
+        //         axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
+        //             console.log("查看>15的时候是否执行")
+        //             if(res.data.code == 0) {
+        //                 if(res.data && res.data.data) {
+        //                     Indicator.close();
+        //                     if(res.data.data.Status == 0){
+        //                         window.clearInterval(window.timer);
+        //                         Indicator.close();
+        //                         window.localStorage.removeItem("order");
+        //                         Toast({
+        //                             message: '订单未付款',
+        //                             duration: 2000
+        //                         })
+        //                     this.$router.push('/order')
+        //                     // }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
+        //                      }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
+        //                          console.log("判断status为1的时候执行")
+        //                         // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
+        //                         // 不是的话跳转到申请成功Success页面
+        //                         window.clearInterval(window.timer);
+        //                         Indicator.close();
+        //                         window.localStorage.removeItem("order");
 
-                                var date = new Date();
-                                var year = date.getFullYear();
-                                var month = date.getMonth() + 1;
-                                var strDate = date.getDate();
-                                // console.log(year,month,strDate)
-                                var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
-                                var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
-                                var nowTime = new Date().getTime();
+        //                         var date = new Date();
+        //                         var year = date.getFullYear();
+        //                         var month = date.getMonth() + 1;
+        //                         var strDate = date.getDate();
+        //                         // console.log(year,month,strDate)
+        //                         var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
+        //                         var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
+        //                         var nowTime = new Date().getTime();
 
-                                console.log(eight,night,nowTime)
-                                if(nowTime>eight && nowTime<night){
-                                    this.$router.push('/PaySuccess');
-                                }else{
-                                    this.$router.push('/Success');
-                                }
-                            }else{
-                                this.$router.push('/order');
-                            }
-                        }
-                    }
-                })
+        //                         console.log(eight,night,nowTime)
+        //                         if(nowTime>eight && nowTime<night){
+        //                             this.$router.push('/PaySuccess');
+        //                         }else{
+        //                             this.$router.push('/Success');
+        //                         }
+        //                     }else{
+        //                         this.$router.push('/order');
+        //                     }
+        //                 }
+        //             }
+        //         })
 
-            },1000)
-        }
+        //     },1000)
+        // }
     },
     methods:{
         //获取订单
@@ -210,12 +212,21 @@ export default {
                 console.log(err)
              })
         },
+        //立即支付
         onlinePay(id) {
-            Indicator.open();
+            // Indicator.open();
             let param = {
                 order_id: id.toString(),
                 access_token: this.token
             }
+            console.log("订单页面的立即支付")
+            console.log(window.localStorage.getItem('source'))
+          if(window.localStorage.getItem('source')=='cmbapp'){
+              console.log("招行付款")
+            window.localStorage.setItem('order',id)
+            window.location.href='https://mys4s.cn/grey/v5/car_inspect/pay_order?access_token='+this.token+'&order_id='+id.toString()+'&source=cmbapp'+'&pay_method=cmbchina2'
+            //  Indicator.close();
+         }else{
             axios.post('/v5/car_inspect/pay_order',param).then((res)=>{
                 console.log(res)
                 if(res.data.code > 0) { 
@@ -228,12 +239,13 @@ export default {
                 }
                 if (res.data && res.data.data.qr_code) {
                     console.log(id)
-                     Indicator.close();
+                    //  Indicator.close();
                     window.localStorage.setItem('order',id)
                     window.location.href=res.data.data.qr_code
                 }
             
             })
+         }
         },
         //查看报告
         gotoReport(id) {
@@ -242,6 +254,7 @@ export default {
        
     },
     created(){
+        console.log(window.localStorage.getItem('source'))
         this.query();
         // console.log(window.localStorage.getItem('order'))
     },

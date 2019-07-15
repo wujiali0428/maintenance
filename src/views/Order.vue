@@ -26,6 +26,8 @@ export default {
     }
   },
   mounted() {
+    console.log(window.localStorage.getItem('source'),"order页面")
+    console.log(this.$route.query.source,"order页面路由")
     document.getElementById('title').innerHTML = this.$route.name
   },
   methods:{

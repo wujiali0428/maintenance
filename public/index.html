@@ -6,7 +6,17 @@
     <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico"> -->
-    <title id="title">维保查询</title>
+    <title id="title">车况查询</title>
+    <script>
+      var _hmt = window._hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?8aa1103054efa44e8054db6417101e0c";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+        
+      })();
+    </script>
   </head>
   <body>
     <noscript>
@@ -14,5 +24,36 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+   <script>
+      (function() {
+      //   // console.log(window.location.search,'--search--');
+      //   // console.log(window.location.href,'-href--');
+      //   // function getQueryString(name) { 
+      //   //   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+      //   //   var r = window.location.href.substr(1).match(reg); 
+      //   //   console.log(r,'--截取的路径--')
+      //   //   if (r != null) return unescape(r[2]); return null; 
+      //   // }
+      //   // var path = getQueryString('source');
+
+        function getQueryString(name) {
+          var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+          var r = window.location.href.substring(window.location.href.indexOf("?")).substr(1).match(reg); 
+          if (r != null) return unescape(r[2]); return null;
+        }
+        var path = getQueryString('source');
+        console.log(path,'-----hh')
+        if(path=='cmbapp'){
+          console.log('sss')
+          // _hmt.push(['_setUserTag', '7690', '招商银行']);
+          _hmt.push(['_trackEvent', '招商银行', 'visitor']);
+        }else{
+          // _hmt.push(['_setUserTag', '7691', '维保h5']);
+          _hmt.push(['_trackEvent', '维保h5', 'visitor',]);
+        }
+        console.log(_hmt);
+      })();
+   </script>
+      
   </body>
 </html>

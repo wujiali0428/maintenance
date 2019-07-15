@@ -57,7 +57,7 @@
   </div>
 </template>
 <script>
-import { Toast,Indicator } from "mint-ui";
+import { Toast ,Indicator} from "mint-ui";
 import axios from 'axios';
 export default {
   data() {
@@ -82,100 +82,101 @@ export default {
     };
   },
   mounted() {
+    // console.log(window.localStorage.getItem('source'),"%%%%")
     this.getPrice();
     document.getElementById('title').innerHTML = this.$route.name
     //支付返回时，判断是否支付成功
-    console.log(window.localStorage.getItem('tag'))
-    if(window.localStorage.getItem('tag')){
-    // if(true){
-      Indicator.open({text:"订单状态查询中"});
-      let params = {
-        status: '-1',
-        limit: '2000',
-        access_token: this.token
-      }
+    // console.log(window.localStorage.getItem('tag'))
+    // if(window.localStorage.getItem('tag')){
+    // // if(true){
+    //   Indicator.open({text:"订单状态查询中"});
+    //   let params = {
+    //     status: '-1',
+    //     limit: '2000',
+    //     access_token: this.token
+    //   }
       
-      //获取后台数据添加的第一项的数组对应的Id，用来向后台发送id验证是否支付成功
-      axios.post('/v5/car_inspect/get_inspect_order_list',params).then(res => {
-        if(res.data.code>0){
-          Toast({
-            message: res.data.msg,
-            duratioon: 2000,
-          })
+    //   //获取后台数据添加的第一项的数组对应的Id，用来向后台发送id验证是否支付成功
+    //   axios.post('/v5/car_inspect/get_inspect_order_list',params).then(res => {
+    //     if(res.data.code>0){
+    //       Toast({
+    //         message: res.data.msg,
+    //         duratioon: 2000,
+    //       })
 
-        }else{
-          if (res.data.code == 0 && res.data.data&& res.data.data.list){
-            const lists = res.data.data.list[0]
-            this.orderId = lists.Id
+    //     }else{
+    //       if (res.data.code == 0 && res.data.data&& res.data.data.list){
+    //         const lists = res.data.data.list[0]
+    //         this.orderId = lists.Id
             
-          } 
-        }
-      })
+    //       } 
+    //     }
+    //   })
     
-        // console.log("aaaa")
-        let numberQuery = 0;
-        window.timer = window.setInterval(()=>{
-          numberQuery++;
-          if(numberQuery > 15) {
-            window.clearInterval(window.timer);
-            Indicator.close();
-            Toast({
-              message : '查询失败',
-              position: 'middle',
-              duratioon: 3000
-            })
-            return
-          }
+    //     // console.log("aaaa")
+    //     let numberQuery = 0;
+    //     window.timer = window.setInterval(()=>{
+    //       numberQuery++;
+    //       if(numberQuery > 15) {
+    //         window.clearInterval(window.timer);
+    //         Indicator.close();
+    //         Toast({
+    //           message : '查询失败',
+    //           position: 'middle',
+    //           duratioon: 3000
+    //         })
+    //         return
+    //       }
       
-          let param = {
-            order_id: this.orderId.toString(),
-            access_token: this.token
-          }
-          // console.log(param,"::::::")
-          //0:待支付  1:已支付报告生成中  2:报告已生成 3:已退款 4:已取消 5:退款中
-          axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
+    //       let param = {
+    //         order_id: this.orderId.toString(),
+    //         access_token: this.token
+    //       }
+    //       // console.log(param,"::::::")
+    //       //0:待支付  1:已支付报告生成中  2:报告已生成 3:已退款 4:已取消 5:退款中
+    //       axios.post('/v5/car_inspect/get_by_id',param).then(res=>{
             
-            if(res.data.code == 0){
-              if(res.data && res.data.data) {
-                window.clearInterval(window.timer);
-                Indicator.close();
-                window.localStorage.removeItem("tag");
-                if(res.data.data.Status == 0) {
-                    Toast({
-                      message: '订单未支付',
-                      duratioon: 3000
-                    })
-                  this.$router.push('/order');
-                }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
-                   console.log("判断status为1的时候执行")
-                  // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
-                  // 不是的话跳转到申请成功Success页面
-                   var date = new Date();
-                  var year = date.getFullYear();
-                  var month = date.getMonth() + 1;
-                  var strDate = date.getDate();
-                  // console.log(year,month,strDate)
-                  var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
-                  var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
-                  var nowTime = new Date().getTime();
+    //         if(res.data.code == 0){
+    //           if(res.data && res.data.data) {
+    //             window.clearInterval(window.timer);
+    //             Indicator.close();
+    //             window.localStorage.removeItem("tag");
+    //             if(res.data.data.Status == 0) {
+    //                 Toast({
+    //                   message: '订单未支付',
+    //                   duratioon: 3000
+    //                 })
+    //               this.$router.push('/order');
+    //             }else if(res.data.data.Status == 1 || res.data.data.Status == 2){
+    //                console.log("判断status为1的时候执行")
+    //               // 如果状态是1说明已经付款，然后判断是不是早上八点到晚上九点之间下的单，如果是跳转到支付成功PaySuccess页面
+    //               // 不是的话跳转到申请成功Success页面
+    //                var date = new Date();
+    //               var year = date.getFullYear();
+    //               var month = date.getMonth() + 1;
+    //               var strDate = date.getDate();
+    //               // console.log(year,month,strDate)
+    //               var eight = new Date(year+'/'+month+'/'+strDate + ' 8:00').getTime()
+    //               var night = new Date(year+'/'+month+'/'+strDate + ' 21:00').getTime()
+    //               var nowTime = new Date().getTime();
 
-                  console.log(eight,night,nowTime)
-                  if(nowTime>eight&&nowTime<night){
-                      this.$router.push('/PaySuccess');
-                  }else{
-                      this.$router.push('/Success');
-                  }
+    //               console.log(eight,night,nowTime)
+    //               if(nowTime>eight&&nowTime<night){
+    //                   this.$router.push('/PaySuccess');
+    //               }else{
+    //                   this.$router.push('/Success');
+    //               }
                   
-                }else{
-                  //除了Stauts为0和1之外其余都跳转到order页面
-                  this.$router.push('/order');
-                }
-              }
-            }
-          })
-        },1000)
+    //             }else{
+    //               //除了Stauts为0和1之外其余都跳转到order页面
+    //               this.$router.push('/order');
+    //             }
+    //           }
+    //         }
+    //       })
+    //     },1000)
       
-    }
+    // }
   },
   methods: {
    
@@ -388,7 +389,7 @@ export default {
       }
       if(this.code.length!=4){
         Toast({
-           message: "验证码错误，请核对后重新输入",
+          message: "验证码错误，请核对后重新输入",
           position: "middle",
           duration: 2000
         })
@@ -430,15 +431,16 @@ export default {
               return
             }
             if (res.data.code === 0) {
-              Indicator.open();
+              // Indicator.open();
               this.canPay()// 验证码通过，拉取支付
             } 
           }).catch(e=>{
-            Toast({
-                message: '请您先验证手机号码',
-                position: "middle",
-                duration: 2000
-              })
+            console.log(e)
+            // Toast({
+            //     message: '请您先验证手机号码',
+            //     position: "middle",
+            //     duration: 2000
+            //   })
           })
         }else {
           console.log(res.data.msg,"验证vin码的msg的值")
@@ -455,36 +457,44 @@ export default {
      
     },
     canPay() {
+      console.log(window.localStorage.getItem('source'))
+      if(window.localStorage.getItem('source')=='cmbapp' || this.$route.query.source=='cmbapp'){
+          window.localStorage.setItem('tag','tag')
+          // Indicator.close();
+          window.location.href='https://mys4s.cn/grey/v5/car_inspect/create_inspect_order?pay_method=cmbchina2&vin='+this.vin+'&tel='+this.userTel+'&access_token='+this.token+'&source=cmbapp'
+      }else{
       
-      // this.aplay = true;
-      console.log("第一步")
-      let param = {
-        vin: this.vin,
-        tel: this.userTel,
-        access_token: this.token,
-        pay_method: "alipay_h5"
+        // this.aplay = true;
+        console.log("第一步")
+        let param = {
+          vin: this.vin,
+          tel: this.userTel,
+          access_token: this.token,
+          pay_method: "alipay_h5"
 
+        }
+        axios.post('/v5/car_inspect/create_inspect_order',param).then((res)=>{
+          console.log(res)
+          if(res.code > 0) { 
+            // Indicator.close();
+            Toast({
+              message: res.data.msg,
+              position: 'middle',
+              duratioon: 2000
+            })
+            return
+          }
+          if (res.data && res.data.data.qr_code) {
+            //支付的时候加一个标识，为了判断是不是由支付跳转到支付宝之后返回的页面，
+            //以便于轮询查看订单是否支付之后跳转页面
+            window.localStorage.setItem('tag','tag')
+            // Indicator.close();
+            //接口返回跳转到支付宝的路径
+            window.location.href=res.data.data.qr_code 
+          }
+        
+        })
       }
-      axios.post('/v5/car_inspect/create_inspect_order',param).then((res)=>{
-        if(res.code > 0) { 
-          Indicator.close();
-          Toast({
-            message: res.data.msg,
-            position: 'middle',
-            duratioon: 2000
-          })
-          return
-        }
-        if (res.data && res.data.data.qr_code) {
-          //支付的时候加一个标识，为了判断是不是由支付跳转到支付宝之后返回的页面，
-          //以便于轮询查看订单是否支付之后跳转页面
-           window.localStorage.setItem('tag','tag')
-           Indicator.close();
-           //接口返回跳转到支付宝的路径
-           window.location.href=res.data.data.qr_code 
-        }
-       
-      })
 
     },
     dataURLtoFile(dataurl, filename) {
